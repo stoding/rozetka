@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="rozetkaTests">
+    <test name="Login">
+
+        <classes>
+            <class name = "LoginFormTest"/>
+        </classes>
+    </test>
+    <test name="itemSearch">
+
+        <classes>
+            <class name = "SearchFormTest"/>
+        </classes>
+    </test>
+</suite>
