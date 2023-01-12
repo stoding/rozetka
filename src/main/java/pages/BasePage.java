@@ -2,37 +2,55 @@ package pages;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
-import java.util.function.Function;
 
 public class BasePage {
-    public static WebDriver driver;
+    public WebDriver driver;
     public WebDriverWait wait;
+    public static final String ROZETKA_HOMEPAGE_ADDRESS = "https://rozetka.com.ua/";
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
-    public boolean isDisplayed(String webElementXpath) {
+    //Не впевнений чи роблять так, але для прискорення деяких тестів зробив два методи isDisplayed,
+    //в одному з них змінюю implicitlyWait для драйвера, щоб прискорити виконання тестів де не треба так довго чекати
+    public boolean isDisplayed(String webElementXpath, int elementWaitTime) {
+        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(elementWaitTime));
         try {
-            return wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath(webElementXpath)))).isDisplayed();
+            return driver.findElement(By.xpath(webElementXpath)).isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
         }
     }
+
+    public boolean isDisplayed(String webElementXpath) {
+        try {
+            return driver.findElement(By.xpath(webElementXpath)).isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+//    public boolean isDisplayed(WebElement element) {
+//        try {
+//            return wait.until(ExpectedConditions.visibilityOf(element)).isDisplayed();
+//        } catch (NoSuchElementException e) {
+//            return false;
+//        }
+//    }
 
     public void waitForElementStaleness(String webElementXpath) {
         wait.until(ExpectedConditions.stalenessOf(driver.findElement(By.xpath(webElementXpath))));
     }
 
     public void fieldClear(String webElementXpath) {
-            driver.findElement(By.xpath(webElementXpath)).clear();
+        driver.findElement(By.xpath(webElementXpath)).clear();
     }
 
-    public static void navigateTo(String link) {
+    public void navigateTo(String link) {
         driver.get(link);
     }
 //    public void waitForPageLoad() {
@@ -49,27 +67,55 @@ public class BasePage {
 //    }
 
     public String getPageTitle() {
-        wait.until(ExpectedConditions.stalenessOf(driver.findElement(By.xpath("//title"))));
+        //wait.until(ExpectedConditions.stalenessOf(driver.findElement(By.xpath("//title"))));
         return driver.getTitle();
     }
+
     public Float getItemPrice(String itemXpath) {
         String price = driver.findElement(By.xpath(itemXpath)).getText();
-        price = price.replaceAll(" ","");
-        price = price.replaceAll("₴","");
+        price = price.replaceAll(" ", "");
+        price = price.replaceAll("₴", "");
         return Float.parseFloat(price);
     }
+
     public Float getItemPrice(WebElement element) {
-        String price = element.findElement(By.xpath("//span[@class='goods-tile__price-value']")).getText();
-        price = price.replaceAll(" ","");
-        price = price.replaceAll("₴","");
+        String price = element.getText();
+        price = price.replaceAll(" ", "");
+        price = price.replaceAll("₴", "");
         return Float.parseFloat(price);
     }
-    public static String getPageURL() {
+
+    public String getPageURL() {
         return driver.getCurrentUrl();
     }
-    public static void browserNavigateBack(){
+
+    public void browserNavigateBack() {
         driver.navigate().back();
     }
+
+    public void deleteItemsFromComparisonList() {
+        try {
+            driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]")).click();
+        } catch (TimeoutException e) {
+            driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]")).click();
+        }
+        wait.until(ExpectedConditions.stalenessOf(driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]"))));
+    }
+
+    public void waitForCategoryPageLoaded() {
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//h1[@class='catalog-heading ng-star-inserted']"))));
+    }
+
+    public void waitForCategoryPortalPageLoaded() {
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//h1[@class='portal__heading ng-star-inserted']"))));
+    }
+
+    public void openHomePage() {
+        driver.get(ROZETKA_HOMEPAGE_ADDRESS);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath("//a[@class='menu-categories__link']"))));
+    }
+
 
 //    public WebElement getWebElement(String webElementXpath){
 //        return driver.findElement(By.xpath(webElementXpath));

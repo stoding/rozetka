@@ -21,21 +21,15 @@ public class BaseSteps {
         this.basePage = new BasePage(driver);
     }
 
-    public <T extends BasePage>void navigateTo(String link) {
-        T.navigateTo(link);
+    public void navigateTo(String link) {
+        basePage.navigateTo(link);
     }
+
     public void navigateToHomePage() {
         homepage.openHomePage();
     }
 
-    public <T extends BasePage> String getPageURL() {
-        return T.getPageURL();
+    public String getPageURL() {
+        return basePage.getPageURL();
     }
-//    public <T extends BasePage> WebElement getWebElement(String webElementXpath) {
-//        return T.getWebElement(webElementXpath);
-//    }
-//    public WebElement getWebElement(String webElementXpath) {
-//        return shoppingCartPage.getWebElement(webElementXpath);
-//    }
-
 }

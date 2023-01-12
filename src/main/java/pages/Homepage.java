@@ -6,41 +6,37 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.time.Duration;
 import java.util.List;
 
 public class Homepage extends BasePage {
 
     public static final String LOGIN_FIELD_VALIDATION_MESSAGE_XPATH = "//input[@id='auth_email']/following-sibling::p";
     public static final String LOGIN_WINDOW_XPATH = "//h3[contains(text(),'Вход')]";
-    public static final String LOGIN_FIELD_XPATH = "//input[@id='auth_email']";
     public static final String LOGIN_ICON_XPATH = "//li[@class='header-actions__item header-actions__item--user']//button";
-    public static final String ROZETKA_HOMEPAGE_ADDRESS = "https://rozetka.com.ua/";
     public static final String LOGIN_BUTTON_XPATH = "//button[contains(text(), 'Войти')]";
 
     public Homepage(WebDriver driver) {
         super(driver);
     }
 
-    public void openHomePage() {
-        driver.get(ROZETKA_HOMEPAGE_ADDRESS);
-    }
 
     public boolean loginIconClick() {
         driver.findElement(By.xpath(LOGIN_ICON_XPATH)).click();
-        return isDisplayed(LOGIN_WINDOW_XPATH);
+        return isDisplayed(LOGIN_WINDOW_XPATH, 2000);
     }
-
 
     public void inputLogin(String login) {
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.id("auth_email")))).sendKeys(login, Keys.TAB);
     }
 
     public String getValidationMessage() {
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(500));
-        if (isDisplayed(LOGIN_FIELD_VALIDATION_MESSAGE_XPATH)) {
+        if (isDisplayed(LOGIN_FIELD_VALIDATION_MESSAGE_XPATH, 100)) {
             return driver.findElement(By.xpath(LOGIN_FIELD_VALIDATION_MESSAGE_XPATH)).getText();
         } else return "";
+    }
+
+    public void searchFieldClear() {
+        fieldClear("//input[@name='search']");
     }
 
     public void inputPassword(String password) {
@@ -51,7 +47,7 @@ public class Homepage extends BasePage {
         driver.findElement(By.xpath(LOGIN_BUTTON_XPATH)).click();
     }
 
-    public void inputSearchQuery(String input) {
+    public void enterSearchQuery(String input) {
         driver.findElement(By.name("search")).sendKeys(input);
     }
 
@@ -63,12 +59,22 @@ public class Homepage extends BasePage {
         driver.findElement(By.xpath("//button[@class='button button_color_green button_size_medium search-form__submit ng-star-inserted']")).click();
     }
 
-    public void openElectronicsCategory() {
+    public void clickElectronicsCategory() {
         driver.findElement(By.xpath("//li/a[@class='menu-categories__link' and contains(text(),'Смартфоны, ТВ и электроника')]")).click();
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//h1[@class='portal__heading ng-star-inserted']"))));
+        waitForCategoryPortalPageLoaded();
     }
 
-    public void openAppliancesCategory() {
+    public void clickAppliancesCategory() {
         driver.findElement(By.xpath("//div[@class='fat-wrap']//a[contains(@href,'https://bt.rozetka.com.ua/')]")).click();
+        waitForCategoryPortalPageLoaded();
+    }
+
+    public void clickHouseHoldItemsCategory() {
+        driver.findElement(By.xpath("//ul[@class='menu-categories menu-categories_type_main']//a[contains(@href,'tovary-dlya-doma')]")).click();
+        waitForCategoryPortalPageLoaded();
+    }
+
+    public void loginFieldClear() {
+        fieldClear("//input[@id='auth_email']");
     }
 }

@@ -34,20 +34,20 @@ public class LoginFormTest extends BaseTest {
         };
     }
 
-    @Test(dataProvider = "loginParams", dependsOnMethods = "loginFormOpen")
+    //Відокремив тест від перевірки відкриття вікна для логіну щоб тест на валідацію полів працював швидше
+    @Test(dataProvider = "loginParams", dependsOnMethods = "loginFormOpen", priority = 1)
     public void loginValidationMessageCheck(String login, String expectedMessage) {
         LoginSteps loginSteps = new LoginSteps(driver);
         loginSteps.loginFieldClean();
         assertThat(loginSteps.loginFormLoginValidationMessage(login)).isEqualTo(expectedMessage);
     }
 
-    @Test
+    @Test(priority = 2)
     public void loginWithValidParameters() {
         LoginSteps loginSteps = new LoginSteps(driver);
         loginSteps.navigateToHomePage();
-        loginSteps.loginFormOpen();
-        loginSteps.loginFieldClean();
-        loginSteps.inputLogin(USER_LOGIN_VALID, USER_PASSWORD_VALID);
+        assertThat(loginSteps.loginFormOpen()).isTrue();
+        loginSteps.loginUser(USER_LOGIN_VALID, USER_PASSWORD_VALID);
         try {
             assertThat(loginSteps.captchaIsDisplayed()).isTrue();
         } catch (AssertionError e) {

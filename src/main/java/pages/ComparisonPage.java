@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
-public class ComparisonPage extends BasePage{
+public class ComparisonPage extends BasePage {
     public ComparisonPage(WebDriver driver) {
         super(driver);
     }
@@ -31,16 +31,15 @@ public class ComparisonPage extends BasePage{
     }
 
     public String getItemTitle(Integer itemNumberOnPage) {
-        return driver.findElement(By.xpath("(//a[@class='product__heading'])["+itemNumberOnPage+"]")).getText();
-
+        return driver.findElement(By.xpath("(//a[@class='product__heading'])[" + itemNumberOnPage + "]")).getText();
     }
 
     public String getItemScreenResolution(Integer itemNumberOnPage) {
-        return driver.findElement(By.xpath("(//h3[contains(text(),'Разрешение дисплея')]/..//span)["+itemNumberOnPage+"]")).getText();
+        return driver.findElement(By.xpath("(//h3[contains(text(),'Разрешение дисплея')]/..//span)[" + itemNumberOnPage + "]")).getText();
     }
 
     public Integer getItemNumberOfSupportedSimCards(Integer itemNumberOnPage) {
-        return Integer.parseInt(driver.findElement(By.xpath("(//h3[contains(text(),'Количество SIM')]/..//span)["+itemNumberOnPage+"]")).getText());
+        return Integer.parseInt(driver.findElement(By.xpath("(//h3[contains(text(),'Количество SIM')]/..//span)[" + itemNumberOnPage + "]")).getText());
     }
 
     @Override
@@ -48,10 +47,10 @@ public class ComparisonPage extends BasePage{
         WebElement parentElement = driver.findElement(By.xpath(itemXpath));
         String originalText = parentElement.getText();
         List<WebElement> children = parentElement.findElements(By.xpath("*[string-length(text()) > 0]"));
-        for(WebElement element :  children)
+        for (WebElement element : children)
             originalText = originalText.replace(element.getText(), "");
 
-        originalText = originalText.replaceAll(" ","");
+        originalText = originalText.replaceAll(" ", "");
         return Float.parseFloat(originalText);
     }
 }

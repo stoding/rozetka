@@ -1,10 +1,11 @@
 import model.Item;
 import org.openqa.selenium.WebElement;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import steps.ShoppingCartSteps;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +13,19 @@ import static org.assertj.core.api.Assertions.*;
 
 public class ShoppingCartTest extends BaseTest {
 
+    @BeforeMethod
+    public void goToHomePage() {
+        ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
+        shoppingCartSteps.navigateToHomePage();
+    }
+
+    @AfterMethod
+    public void clearShoppingCart() {
+        ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
+        shoppingCartSteps.navigateTo("https://bt.rozetka.com.ua/cart/");
+        shoppingCartSteps.waitForShoppingCartPageLoad();
+        shoppingCartSteps.shoppingCartClear();
+    }
 
     @Test
     public void priceUpdateAfterAddingService() {
@@ -28,11 +42,11 @@ public class ShoppingCartTest extends BaseTest {
             shoppingCartSteps.clickShoppingCartButton();
         assertThat(shoppingCartSteps.shoppingCartWindowIsDisplayed()).isTrue();
         assertThat(itemFromCategoryPage.getItemPrice()).isEqualTo(shoppingCartSteps.getTotalPriceFromShoppingCartWindow());
-        assertThat(shoppingCartSteps.getTwoYearWarrantyPriceAndAddService()+itemFromCategoryPage.getItemPrice()).isEqualTo(shoppingCartSteps.getTotalPriceFromShoppingCartWindow());
+        assertThat(shoppingCartSteps.getTwoYearWarrantyPriceAndAddService() + itemFromCategoryPage.getItemPrice()).isEqualTo(shoppingCartSteps.getTotalPriceFromShoppingCartWindow());
     }
 
     @Test
-    public void itemsWithDiscountAddToCart() throws InterruptedException {
+    public void itemsWithDiscountAddToCart() {
         ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
         shoppingCartSteps.openAppliancesCategory();
         assertThat(shoppingCartSteps.getPageURL()).contains("bt.rozetka.com.ua");
@@ -40,32 +54,26 @@ public class ShoppingCartTest extends BaseTest {
         assertThat(shoppingCartSteps.getPageURL()).contains("washing_machines");
         shoppingCartSteps.waitForItemsLoaded();
 
-//        List<Item> itemsList = new ArrayList<>();
-//        for(int i = 1; i<3; i++) {
-//            itemsList.add(shoppingCartSteps.getItemWithDiscountSpecsAndAddToCart(i));
-//            assertThat(shoppingCartSteps.itemAddedToShoppingCartMessageIsDisplayed()).isTrue();
-//            assertThat(shoppingCartSteps.shoppingCartIconIsUpdated(itemsList.get(i-1))).isTrue();
-//            assertThat(shoppingCartSteps.shoppingCartHeaderCounterIsUpdated()).isEqualTo(i);
-//        }
-        Item item1 = shoppingCartSteps.getItemWithDiscountSpecsAndAddToCart(1);
-        Thread.sleep(4000);
-        Item item2 = shoppingCartSteps.getItemWithDiscountSpecsAndAddToCart(2);
-        assertThat(shoppingCartSteps.itemAddedToShoppingCartMessageIsDisplayed()).isTrue();
-        //assertThat(shoppingCartSteps.shoppingCartIconIsUpdated(itemsList.get(i-1))).isTrue();
-       // assertThat(shoppingCartSteps.shoppingCartHeaderCounterIsUpdated()).isEqualTo(i);
-
+        List<Item> itemsList = new ArrayList<>();
+        for (int i = 1; i < 3; i++) {
+            itemsList.add(shoppingCartSteps.getItemWithDiscountSpecsAndAddToCart(i));
+            assertThat(shoppingCartSteps.itemAddedToShoppingCartMessageIsDisplayed()).isTrue();
+            assertThat(shoppingCartSteps.shoppingCartIconIsUpdated(itemsList.get(i - 1))).isTrue();
+            assertThat(shoppingCartSteps.shoppingCartHeaderCounterIsUpdated()).isEqualTo(i);
+        }
         shoppingCartSteps.clickShoppingCartHeaderIcon();
         assertThat(shoppingCartSteps.shoppingCartWindowIsDisplayed()).isTrue();
-        List<WebElement> shoppingCartItems = shoppingCartSteps.getItemsListFromShoppingCartPage();
-//        assertThat(shoppingCartItems.size()==itemsList.size()).isTrue();
-//        Collections.reverse(itemsList);
-//        float total = 0;
-//        for (int i=0;i<itemsList.size();i++)
-//             {
-//                 assertThat(shoppingCartSteps.getItemTitleFromShoppingCartPage(shoppingCartItems.get(i))).isEqualTo(itemsList.get(i).getItemTitle());
-//                 total+=itemsList.get(i).getItemPrice();
-//        }
-//        assertThat(shoppingCartSteps.getShoppingCartTotal()).isEqualTo(total);
-        Thread.sleep(5000);
+        List<Item> shoppingCartItems = shoppingCartSteps.getShoppingCartItems();
+        assertThat(shoppingCartItems.size() == itemsList.size()).isTrue();
+        Collections.reverse(itemsList);
+
+        float total = 0;
+        for (int i = 0; i < itemsList.size(); i++) {
+            // тут навіть пощастило побачити падіння тесту, бо title однієї з пральних машинок на сторінці категорії
+            // відрізняється, від title у корзині
+            assertThat(shoppingCartItems.get(i).getItemTitle()).isEqualTo(itemsList.get(i).getItemTitle());
+            total += itemsList.get(i).getItemPrice();
+        }
+        assertThat(shoppingCartSteps.getShoppingCartTotal()).isEqualTo(total);
     }
 }

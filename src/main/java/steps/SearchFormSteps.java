@@ -1,7 +1,6 @@
 package steps;
 
 import model.SearchField;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -13,11 +12,13 @@ public class SearchFormSteps extends BaseSteps {
         super(driver);
     }
 
-    public void inputSearchQuery(String input) {
-        homepage.inputSearchQuery(input);
+    public void enterSearchQuery(String input) {
+        homepage.searchFieldClear();
+        homepage.enterSearchQuery(input);
+        //   waitForSearchResultUpdate();
     }
 
-    public List<WebElement> getSuggestionList(){
+    public List<WebElement> getSuggestionList() {
         return homepage.getSearchSuggestionList();
     }
 
@@ -30,20 +31,15 @@ public class SearchFormSteps extends BaseSteps {
         return false;
     }
 
-    public void searchFieldClear() {
-        homepage.fieldClear("//*[@name='search']");
-    }
-
     public void waitForSearchResultUpdate() {
         homepage.waitForElementStaleness("//div[@class='search-suggest ng-star-inserted']//a");
     }
 
-    public List<SearchField> getSuggestedCategoryNameAndLink(List<WebElement> suggestionList) {
+    public List<SearchField> getSuggestedCategoryNameAndLink() {
         List<SearchField> categoryParameters = new ArrayList<>();
-        for (WebElement element: suggestionList
-             ) {
+        for (WebElement element : homepage.getSearchSuggestionList()
+        ) {
             categoryParameters.add(new SearchField(element.getText(), element.getAttribute("href")));
-
         }
         return categoryParameters;
     }
@@ -51,20 +47,4 @@ public class SearchFormSteps extends BaseSteps {
     public String getCategoryPageBreadCrumbs() {
         return categoryPage.getBreadCrumbs();
     }
-
-
-
-    //    public boolean compareCategories (List<CategoryParameters> categoryParameters){
-//
-//        for (CategoryParameters suggestedCategory: categoryParameters
-//             ) {
-//            homepage.navigateTo(suggestedCategory.getCategoryLink());
-//            categoryPage.getBreadCrumbs();
-//            if (categoryPage.getBreadCrumbs().contains(suggestedCategory.getCategoryName()))
-//                return true;
-//        }
-//        return false;
-//    }
-    //Вирішив зробити вкладений клас, бо здається ці об'єкти більше ніде не будуть використовуватися
-
 }

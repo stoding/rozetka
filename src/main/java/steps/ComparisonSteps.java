@@ -6,15 +6,17 @@ import org.openqa.selenium.WebDriver;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComparisonSteps extends BaseSteps{
+public class ComparisonSteps extends BaseSteps {
     public ComparisonSteps(WebDriver driver) {
         super(driver);
     }
 
     public void inputSearchItem(String queryString) {
-        homepage.inputSearchQuery(queryString);
+        homepage.enterSearchQuery(queryString);
         homepage.clickSearchButton();
+        itemPage.waitForItemPageLoad(queryString);
     }
+
     public String getItemTitleFromCategoryPage(Integer elementNumberInCategoryList) {
         return categoryPage.getItemTitleFromCategoryPage(elementNumberInCategoryList);
     }
@@ -22,6 +24,7 @@ public class ComparisonSteps extends BaseSteps{
     public void addElementToComparisonList(Integer elementNumberInCategoryList) {
         categoryPage.addElementToComparison(elementNumberInCategoryList);
     }
+
     public void addElementToComparisonList() {
         categoryPage.addElementToComparison();
     }
@@ -49,12 +52,10 @@ public class ComparisonSteps extends BaseSteps{
 
     public String getNumberOfItemsToCompare() {
         return categoryPage.getNumberOfItemsToCompare();
-
     }
 
     public void navigateToComparisonPage() {
         categoryPage.navigateToComparisonPage();
-
     }
 
     public String getComparisonPageURL() {
@@ -67,9 +68,7 @@ public class ComparisonSteps extends BaseSteps{
 
     public String itemToCompareDisplayed() {
         return comparisonPage.itemToCompareDisplayed();
-
     }
-
 
     public String getItemPageTitle() {
         return itemPage.getPageTitle();
@@ -82,24 +81,34 @@ public class ComparisonSteps extends BaseSteps{
                 itemPage.getItemPrice("//div[(contains(@class,'product-carriage__price'))]"),
                 itemPage.getItemScreenResolution(),
                 itemPage.getItemNumberOfSupportedSimCards()
-                );
+        );
     }
 
     public void openAllItemSpecsOnComparisonPage() {
         comparisonPage.openAllItemSpecsOnComparisonPage();
-
     }
 
     public List<Item> getItemSpecsFromComparisonPage() {
         List<Item> comparedItems = new ArrayList<>();
         Integer getItemsQuantityOnPage = comparisonPage.getComparedItemsQuantity();
-        for (int i = 1; i < getItemsQuantityOnPage+1; i++) {
+        for (int i = 1; i < getItemsQuantityOnPage + 1; i++) {
             comparedItems.add(new Item(comparisonPage.getItemTitle(i),
-                    comparisonPage.getItemPrice("(//div[@class='product__prices']/div)["+i+"]"),
+                    comparisonPage.getItemPrice("(//div[@class='product__prices']/div)[" + i + "]"),
                     comparisonPage.getItemScreenResolution(i),
                     comparisonPage.getItemNumberOfSupportedSimCards(i)));
         }
         return comparedItems;
     }
 
+    public void inputSearchCategory(String searchQueryCategory) {
+        homepage.searchFieldClear();
+        homepage.enterSearchQuery(searchQueryCategory);
+        homepage.clickSearchButton();
+        categoryPage.waitForCategoryPageLoad();
+    }
+
+    public void clearComparisonList() {
+        openComparisonWindow();
+        itemPage.deleteItemsFromComparisonList();
+    }
 }

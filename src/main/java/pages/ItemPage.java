@@ -1,6 +1,7 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -12,7 +13,11 @@ public class ItemPage extends BasePage {
 
     public void specificationButtonClick() {
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.className("tabs__list"))));
-        driver.findElement(By.xpath("//a[contains(@href,'characteristics')]")).click();
+        try {
+            driver.findElement(By.xpath("//a[contains(@href,'characteristics')]")).click();
+        } catch (StaleElementReferenceException e) {
+            driver.findElement(By.xpath("//a[contains(@href,'characteristics')]")).click();
+        }
     }
 
     public String getItemScreenResolution() {
@@ -54,6 +59,10 @@ public class ItemPage extends BasePage {
 
     public void waitForPriceUpdate() {
         WebElement oldPrice = driver.findElement(By.xpath("//div[@class='cart-receipt__sum-price']/span"));
-        wait.until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(oldPrice,oldPrice.getText())));
+        wait.until(ExpectedConditions.not(ExpectedConditions.textToBePresentInElement(oldPrice, oldPrice.getText())));
+    }
+
+    public void waitForItemPageLoad(String expectedItem) {
+        wait.until(ExpectedConditions.stalenessOf(driver.findElement(By.xpath("//p[contains(text(),'" + expectedItem + "')]"))));
     }
 }

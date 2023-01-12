@@ -7,7 +7,6 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-//вынести добавление в корзину в отдельный метод, добавить булеан с дискаунтом или без
 
 public class ShoppingCartSteps extends BaseSteps{
     public ShoppingCartSteps(WebDriver driver) {
@@ -15,12 +14,13 @@ public class ShoppingCartSteps extends BaseSteps{
     }
 
     public void openElectronicsCategory() {
-        homepage.openElectronicsCategory();
+        homepage.clickElectronicsCategory();
     }
 
 
     public void openIphoneCategory() {
         categoryPage.clickIphoneCategoryLink();
+        waitForItemsLoaded();
     }
 
     public Item getItemWithDiscountSpecsAndOpenPage(Integer elementNumberInList) {
@@ -66,7 +66,6 @@ public class ShoppingCartSteps extends BaseSteps{
     }
 
     public Float getTwoYearWarrantyPriceAndAddService() {
-
         Float twoYearWarrantyPrice = itemPage.getTwoYearWarrantyPrice();
         itemPage.addTwoYearWarrantyRadioButtonClick();
         itemPage.waitForPriceUpdate();
@@ -78,7 +77,7 @@ public class ShoppingCartSteps extends BaseSteps{
     }
 
     public void openAppliancesCategory() {
-        homepage.openAppliancesCategory();
+        homepage.clickAppliancesCategory();
     }
 
     public void openWashingMachinesCategory() {
@@ -124,6 +123,18 @@ public class ShoppingCartSteps extends BaseSteps{
 
     public Float getShoppingCartTotal() {
         return getTotalPriceFromShoppingCartWindow();
-        //return null;
+    }
+
+    public List<Item> getShoppingCartItems() {
+        List<WebElement> elementsInShoppingCart = shoppingCartPage.getItemListFromShoppingCartPage();
+        return shoppingCartPage.getShoppingCartItems(elementsInShoppingCart);
+    }
+
+    public void shoppingCartClear() {
+        shoppingCartPage.deleteAllItemsInCart();
+    }
+
+    public void waitForShoppingCartPageLoad() {
+        shoppingCartPage.waitForShoppingCartPageLoad();
     }
 }
