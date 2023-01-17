@@ -65,7 +65,7 @@ public class ComparisonTest extends BaseTest {
         assertThat(comparisonSteps.comparisonIconIsUpdated()).isTrue();
         assertThat(comparisonSteps.getNumberOfItemsOfComparisonIcon()).isEqualTo("2");
         assertThat(comparisonSteps.itemAddToComparisonListMessageIsDisplayed()).isTrue();
-        comparisonSteps.openComparisonWindow();
+        assertThat(comparisonSteps.openComparisonWindow()).isTrue();
         comparisonSteps.navigateToComparisonPage();
         comparisonSteps.openAllItemSpecsOnComparisonPage();
         List<Item> itemListOnComparisonPate = comparisonSteps.getItemSpecsFromComparisonPage();

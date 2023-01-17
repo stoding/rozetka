@@ -39,7 +39,9 @@ public class ShoppingCartPage extends BasePage {
         List<WebElement> itemsInCart = driver.findElements(By.xpath("//div[@class='cart-product__body']//button"));
         for (WebElement element : itemsInCart) {
             element.click();
-            element.findElement(By.xpath("./following-sibling::div//button")).click();
+            //Дивно, але тут як і в тестах з порівняння - ComparisonTest перестали відпрацьовувати кліки мишки, падає вейтер
+            wait.until(ExpectedConditions.visibilityOf(element.findElement(By.xpath("./following-sibling::div//button")))).click();
+            wait.until(ExpectedConditions.stalenessOf(element));
         }
     }
 

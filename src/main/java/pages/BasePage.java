@@ -2,13 +2,17 @@ package pages;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 public class BasePage {
     public WebDriver driver;
     public WebDriverWait wait;
+
     public static final String ROZETKA_HOMEPAGE_ADDRESS = "https://rozetka.com.ua/";
 
     public BasePage(WebDriver driver) {
@@ -94,13 +98,20 @@ public class BasePage {
     }
 
     public void deleteItemsFromComparisonList() {
+        driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]")).click();
+
+        //Чомусь у другому тесті не відбувся клік кнопки видалення елементів зі списку порівняння, тому тест падав
+        //з Timeout тому що та кнопка не пропадала зі сторінки (коли видаляються елементи - кнопка пропадає)
+        // хоча при відладці все було ок, елемент знаходило той що треба, добавив такий обробник,
+        // буду вдячний за підказку що не так
         try {
-            driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]")).click();
-        } catch (TimeoutException e) {
-            driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]")).click();
+            wait.until(ExpectedConditions.stalenessOf(driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]"))));
         }
-        wait.until(ExpectedConditions.stalenessOf(driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]"))));
-    }
+        catch (TimeoutException e){
+            driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]")).click();
+            wait.until(ExpectedConditions.stalenessOf(driver.findElement(By.xpath("//button[contains(@class,'comparison-modal__remove')]"))));
+        }
+        }
 
     public void waitForCategoryPageLoaded() {
         wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//h1[@class='catalog-heading ng-star-inserted']"))));
