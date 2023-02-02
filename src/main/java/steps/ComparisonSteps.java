@@ -11,17 +11,17 @@ public class ComparisonSteps extends BaseSteps {
         super(driver);
     }
 
-    public void inputSearchItem(String queryString) {
+    public void SearchForItem(String queryString) {
         homepage.enterSearchQuery(queryString);
         homepage.clickSearchButton();
         itemPage.waitForItemPageLoad(queryString);
     }
 
-    public String getItemTitleFromCategoryPage(Integer elementNumberInCategoryList) {
-        return categoryPage.getItemTitleFromCategoryPage(elementNumberInCategoryList);
+    public String getItemTitleFromCategoryPage(int elementNumberInCategoryList) {
+        return categoryPage.getItemTitle(elementNumberInCategoryList);
     }
 
-    public void addElementToComparisonList(Integer elementNumberInCategoryList) {
+    public void addElementToComparisonList(int elementNumberInCategoryList) {
         categoryPage.addElementToComparison(elementNumberInCategoryList);
     }
 
@@ -30,7 +30,7 @@ public class ComparisonSteps extends BaseSteps {
     }
 
     public boolean comparisonIconIsUpdated() {
-        return categoryPage.isDisplayed("//button[@class='compare-button compare-button_state_active']");
+        return categoryPage.comparisonIconIsUpdated();
     }
 
     public String getNumberOfItemsOfComparisonIcon() {
@@ -38,7 +38,7 @@ public class ComparisonSteps extends BaseSteps {
     }
 
     public boolean itemAddToComparisonListMessageIsDisplayed() {
-        return categoryPage.isDisplayed("//a[contains(text(),'сравнение')]");
+        return categoryPage.itemAddToComparisonListMessageIsDisplayed();
     }
 
     public boolean openComparisonWindow() {
@@ -66,8 +66,8 @@ public class ComparisonSteps extends BaseSteps {
         return comparisonPage.isDisplayed("//*[contains(text(),'Недостаточно товаров')]");
     }
 
-    public String itemToCompareDisplayed() {
-        return comparisonPage.itemToCompareDisplayed();
+    public String getItemOnComparisonPage() {
+        return comparisonPage.getItemTitleOnComparisonPage();
     }
 
     public String getItemPageTitle() {
@@ -93,14 +93,16 @@ public class ComparisonSteps extends BaseSteps {
         Integer getItemsQuantityOnPage = comparisonPage.getComparedItemsQuantity();
         for (int i = 1; i < getItemsQuantityOnPage + 1; i++) {
             comparedItems.add(new Item(comparisonPage.getItemTitle(i),
-                    comparisonPage.getItemPrice("(//div[@class='product__prices']/div)[" + i + "]"),
+                    comparisonPage.getItemPrice(String.format("(//div[contains(@class,'product__price')]/span)[%s]",i)),
                     comparisonPage.getItemScreenResolution(i),
                     comparisonPage.getItemNumberOfSupportedSimCards(i)));
+
+
         }
         return comparedItems;
     }
 
-    public void inputSearchCategory(String searchQueryCategory) {
+    public void searchForCategory(String searchQueryCategory) {
         homepage.searchFieldClear();
         homepage.enterSearchQuery(searchQueryCategory);
         homepage.clickSearchButton();
@@ -108,7 +110,20 @@ public class ComparisonSteps extends BaseSteps {
     }
 
     public void clearComparisonList() {
-        openComparisonWindow();
-        itemPage.deleteItemsFromComparisonList();
+        // Знайшов простіший спосіб видаляти зміст списку порівняння, та в іншому тесті зі змістом кошику покупця
+        comparisonPage.clearCookies();
+        }
+
+    public boolean isComparedListsEqual(List<Item> itemList, List<Item> itemListOnComparisonPage) {
+        int itemsListSize = itemList.size();
+        if (itemList.size()==itemListOnComparisonPage.size()) {
+            for (int i = 0; i < itemsListSize; i++) {
+                if (!itemList.get(i).equals(itemListOnComparisonPage.get(itemsListSize - 1 - i)))
+                    return false;
+            }
+        }
+        else return false;
+
+        return true;
     }
 }

@@ -1,7 +1,6 @@
 package steps;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import pages.*;
 
 public class BaseSteps {
@@ -11,6 +10,7 @@ public class BaseSteps {
     public ComparisonPage comparisonPage;
     public ItemPage itemPage;
     public ShoppingCartPage shoppingCartPage;
+
 
     public BaseSteps(WebDriver driver) {
         this.homepage = new Homepage(driver);
@@ -31,5 +31,9 @@ public class BaseSteps {
 
     public String getPageURL() {
         return basePage.getPageURL();
+    }
+
+    public void openCategory(String categoryLinkContains){
+        basePage.openCategory(categoryLinkContains);
     }
 }

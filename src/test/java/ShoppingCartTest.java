@@ -1,5 +1,4 @@
 import model.Item;
-import org.openqa.selenium.WebElement;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -22,33 +21,29 @@ public class ShoppingCartTest extends BaseTest {
     @AfterMethod
     public void clearShoppingCart() {
         ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
-        shoppingCartSteps.navigateTo("https://bt.rozetka.com.ua/cart/");
-        shoppingCartSteps.waitForShoppingCartPageLoad();
-        shoppingCartSteps.shoppingCartClear();
+        shoppingCartSteps.clearShoppingCart();
     }
 
     @Test
     public void priceUpdateAfterAddingService() {
         ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
-        shoppingCartSteps.openElectronicsCategory();
+        shoppingCartSteps.openCategory("telefony-tv-i-ehlektronika");
         assertThat(shoppingCartSteps.getPageURL()).contains("telefony-tv-i-ehlektronika");
         shoppingCartSteps.openIphoneCategory();
         assertThat(shoppingCartSteps.getPageURL()).contains("mobile-phones");
         Item itemFromCategoryPage = shoppingCartSteps.getItemWithDiscountSpecsAndOpenPage(1);
         assertThat(itemFromCategoryPage.getItemTitle()).isEqualTo(shoppingCartSteps.getItemTitleFromItemPage());
         shoppingCartSteps.buyButtonClick();
-        //Іноді не спливає вікно з вмістом кошику, додав перевірку
-        if (!shoppingCartSteps.shoppingCartWindowIsDisplayed())
-            shoppingCartSteps.clickShoppingCartButton();
         assertThat(shoppingCartSteps.shoppingCartWindowIsDisplayed()).isTrue();
         assertThat(itemFromCategoryPage.getItemPrice()).isEqualTo(shoppingCartSteps.getTotalPriceFromShoppingCartWindow());
-        assertThat(shoppingCartSteps.getTwoYearWarrantyPriceAndAddService() + itemFromCategoryPage.getItemPrice()).isEqualTo(shoppingCartSteps.getTotalPriceFromShoppingCartWindow());
+        float actualTotalPrice = shoppingCartSteps.getTwoYearWarrantyPriceAndAddService() + itemFromCategoryPage.getItemPrice();
+        assertThat(actualTotalPrice).isEqualTo(shoppingCartSteps.getTotalPriceFromShoppingCartWindow());
     }
 
     @Test
     public void itemsWithDiscountAddToCart() {
         ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
-        shoppingCartSteps.openAppliancesCategory();
+        shoppingCartSteps.openCategory("bt.rozetka");
         assertThat(shoppingCartSteps.getPageURL()).contains("bt.rozetka.com.ua");
         shoppingCartSteps.openWashingMachinesCategory();
         assertThat(shoppingCartSteps.getPageURL()).contains("washing_machines");
@@ -58,7 +53,7 @@ public class ShoppingCartTest extends BaseTest {
         for (int i = 1; i < 3; i++) {
             itemsList.add(shoppingCartSteps.getItemWithDiscountSpecsAndAddToCart(i));
             assertThat(shoppingCartSteps.itemAddedToShoppingCartMessageIsDisplayed()).isTrue();
-            assertThat(shoppingCartSteps.shoppingCartIconIsUpdated(itemsList.get(i - 1))).isTrue();
+            assertThat(shoppingCartSteps.isShoppingCartIconUpdated(itemsList.get(i - 1))).isTrue();
             assertThat(shoppingCartSteps.shoppingCartHeaderCounterIsUpdated()).isEqualTo(i);
         }
         shoppingCartSteps.clickShoppingCartHeaderIcon();

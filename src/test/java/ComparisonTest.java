@@ -1,6 +1,5 @@
 import model.Item;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import steps.ComparisonSteps;
@@ -12,10 +11,11 @@ import static org.assertj.core.api.Assertions.*;
 
 public class ComparisonTest extends BaseTest {
 
-    public static final int ITEM_NUMBER_IN_CATEGORY_LIST = 1;
-    public static final String SEARCH_QUERY_CATEGORY = "iPhone";
-    public static final String SEARCH_QUERY_FISRT_ITEM_ID = "318463324";
-    public static final String SEARCH_QUERY_SECOND_ITEM_ID = "260937036";
+    private static final int ITEM_NUMBER_IN_CATEGORY_LIST = 1;
+    private static final String SEARCH_QUERY_CATEGORY = "iPhone";
+    private static final String[] SEARCH_QUERY_FIRST_ITEM = {"318463324","Мобильный телефон Apple iPhone 13 128GB Pink (MLPH3HU/A)"};
+    private static final String[] SEARCH_QUERY_SECOND_ITEM = {"260937036","Мобильный телефон Apple iPhone 11 128GB Yellow (MHDL3)"};
+
 
     @BeforeMethod
     public void goToHomePage() {
@@ -32,7 +32,7 @@ public class ComparisonTest extends BaseTest {
     @Test
     public void addOneItemToComparisonList() {
         ComparisonSteps comparisonSteps = new ComparisonSteps(driver);
-        comparisonSteps.inputSearchCategory(SEARCH_QUERY_CATEGORY);
+        comparisonSteps.searchForCategory(SEARCH_QUERY_CATEGORY);
         String comparedItemTitle = comparisonSteps.getItemTitleFromCategoryPage(ITEM_NUMBER_IN_CATEGORY_LIST);
         comparisonSteps.addElementToComparisonList(ITEM_NUMBER_IN_CATEGORY_LIST);
         assertThat(comparisonSteps.comparisonIconIsUpdated()).isTrue();
@@ -44,22 +44,22 @@ public class ComparisonTest extends BaseTest {
         comparisonSteps.navigateToComparisonPage();
         assertThat(comparisonSteps.getComparisonPageURL()).contains("comparison");
         assertThat(comparisonSteps.notEnoughItemsToCompareMessageIsDisplayed()).isTrue();
-        assertThat(comparisonSteps.itemToCompareDisplayed()).contains(comparedItemTitle);
+        assertThat(comparisonSteps.getItemOnComparisonPage()).contains(comparedItemTitle);
     }
 
     @Test
     public void comparedItemsParametersCheck() {
         ComparisonSteps comparisonSteps = new ComparisonSteps(driver);
-        comparisonSteps.inputSearchItem(SEARCH_QUERY_FISRT_ITEM_ID);
-        assertThat(comparisonSteps.getItemPageTitle()).contains("Мобильный телефон Apple iPhone 13 128GB Pink (MLPH3HU/A)");
+        comparisonSteps.SearchForItem(SEARCH_QUERY_FIRST_ITEM[0]);
+        assertThat(comparisonSteps.getItemPageTitle()).contains(SEARCH_QUERY_FIRST_ITEM[1]);
         List<Item> itemList = new ArrayList<>();
         itemList.add(comparisonSteps.getItemSpecsFromItemPage());
         comparisonSteps.addElementToComparisonList();
         assertThat(comparisonSteps.comparisonIconIsUpdated()).isTrue();
         assertThat(comparisonSteps.getNumberOfItemsOfComparisonIcon()).isEqualTo("1");
         assertThat(comparisonSteps.itemAddToComparisonListMessageIsDisplayed()).isTrue();
-        comparisonSteps.inputSearchItem(SEARCH_QUERY_SECOND_ITEM_ID);
-        assertThat(comparisonSteps.getItemPageTitle()).contains("Мобильный телефон Apple iPhone 11 128GB Yellow (MHDL3)");
+        comparisonSteps.SearchForItem(SEARCH_QUERY_SECOND_ITEM[0]);
+        assertThat(comparisonSteps.getItemPageTitle()).contains(SEARCH_QUERY_SECOND_ITEM[1]);
         itemList.add(comparisonSteps.getItemSpecsFromItemPage());
         comparisonSteps.addElementToComparisonList();
         assertThat(comparisonSteps.comparisonIconIsUpdated()).isTrue();
@@ -68,11 +68,9 @@ public class ComparisonTest extends BaseTest {
         assertThat(comparisonSteps.openComparisonWindow()).isTrue();
         comparisonSteps.navigateToComparisonPage();
         comparisonSteps.openAllItemSpecsOnComparisonPage();
-        List<Item> itemListOnComparisonPate = comparisonSteps.getItemSpecsFromComparisonPage();
-        int itemsListSize = itemList.size();
-        assertThat(itemsListSize).isEqualTo(itemListOnComparisonPate.size());
-        for (int i = 0; i < itemsListSize; i++) {
-            assertThat(itemList.get(i).equals(itemListOnComparisonPate.get(itemsListSize - 1 - i))).isTrue();
-        }
+        List<Item> itemListOnComparisonPage = comparisonSteps.getItemSpecsFromComparisonPage();
+        assertThat(comparisonSteps.isComparedListsEqual(itemList, itemListOnComparisonPage)).isTrue();
+
     }
 }
+

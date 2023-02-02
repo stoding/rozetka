@@ -33,7 +33,7 @@ public class ItemPage extends BasePage {
     }
 
     public void buyButtonClick() {
-        driver.findElement(By.xpath("//button[@class='buy-button button button--with-icon button--green button--medium ng-star-inserted']")).click();
+        driver.findElement(By.xpath("//div[contains(@class,'product-trade')]//button[contains(@class,'buy-button')]")).click();
     }
 
     public float getShoppingCartTotal() {
@@ -41,11 +41,11 @@ public class ItemPage extends BasePage {
     }
 
     public void addTwoYearWarrantyRadioButtonClick() {
-        driver.findElement(By.xpath("//li[@class='cart-service__variants-item ng-star-inserted']//span[contains(text(),'2 года (25001-40000)')]/following-sibling::span")).click();
+        driver.findElement(By.xpath("//ul[@class='cart-service__variants']//span[contains(text(),'25001-40000')]")).click();
     }
 
     public Float getTwoYearWarrantyPrice() {
-        return getItemPrice("//li[@class='cart-service__variants-item ng-star-inserted']//span[contains(text(),'2 года (25001-40000)')]/following-sibling::span");
+        return getItemPrice("//ul[@class='cart-service__variants']//span[contains(text(),'25001-40000')]//following-sibling::span");
     }
 
     public String getItemTitle() {
@@ -54,7 +54,6 @@ public class ItemPage extends BasePage {
 
     public void clickShoppingCartButton() {
         driver.findElement(By.xpath("//button[@class='buy-button button button--with-icon button--green button--medium ng-star-inserted buy-button_state_in-cart']")).click();
-        //wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//div[@class='modal__holder modal__holder_show_animation modal__holder--large']"))));
     }
 
     public void waitForPriceUpdate() {

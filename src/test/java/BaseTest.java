@@ -16,13 +16,10 @@ public class BaseTest {
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        System.out.println("Init driver");
     }
 
     @BeforeClass
     public void openHomePage() {
-        System.out.println("Before class");
-        System.out.println(driver);
         BaseSteps baseSteps = new BaseSteps(driver);
         baseSteps.navigateToHomePage();
     }

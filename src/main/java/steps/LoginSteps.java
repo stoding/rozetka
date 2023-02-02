@@ -8,20 +8,18 @@ public class LoginSteps extends BaseSteps {
         super(driver);
     }
 
-    public boolean loginFormOpen() {
-        return homepage.loginIconClick();
+    public boolean clickLoginAndVerifyFormOpened() {
+        homepage.loginIconClick();
+        return homepage.loginWindowIsDisplayed();
     }
 
-    public String loginFormLoginValidationMessage(String login) {
+    public String getLoginFormLoginValidationMessage(String login) {
+        homepage.loginFieldClear();
         homepage.inputLogin(login);
         return homepage.getValidationMessage();
     }
 
-    public void loginFieldClean() {
-        homepage.loginFieldClear();
-    }
-
-    public void loginUser(String login, String password) {
+    public void fillLoginForm(String login, String password) {
         homepage.inputLogin(login);
         homepage.inputPassword(password);
         homepage.loginButtonClick();

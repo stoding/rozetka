@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -13,41 +14,16 @@ public class ShoppingCartSteps extends BaseSteps{
         super(driver);
     }
 
-    public void openElectronicsCategory() {
-        homepage.clickElectronicsCategory();
-    }
-
-
     public void openIphoneCategory() {
         categoryPage.clickIphoneCategoryLink();
         waitForItemsLoaded();
     }
 
-    public Item getItemWithDiscountSpecsAndOpenPage(Integer elementNumberInList) {
+    public Item getItemWithDiscountSpecsAndOpenPage(int elementNumberInList) {
         Item item = categoryPage.getItemSpecs(elementNumberInList,true);
         categoryPage.openElementPageWithDiscountedPrice(elementNumberInList);
         return item;
     }
-
-//    public Item getItemSpecs(Integer elementNumberInList, boolean discountedItemsOnly) {
-//        WebElement element;
-//        String itemTitle;
-//        Float itemPrice;
-//       // Item item;
-//
-//        if (discountedItemsOnly) {
-//            element = categoryPage.getWebElement("(//div[@class='goods-tile__price price--red ng-star-inserted']/../..)["+elementNumberInList+"]");
-//
-//            //item = new Item(itemTitle,itemPrice,element);
-//        }
-//        else {
-//            element = categoryPage.getWebElement("(//div[@class='goods-tile__inner'])["+elementNumberInList+"]");
-//            //item = new Item(itemTitle,itemPrice,element);
-//        }
-//        itemTitle = categoryPage.getElementTitle(element);
-//        itemPrice = categoryPage.getItemPrice(element);
-//        return new Item(itemTitle,itemPrice,element);
-//    }
 
     public String getItemTitleFromItemPage() {
         return itemPage.getItemTitle();
@@ -55,6 +31,9 @@ public class ShoppingCartSteps extends BaseSteps{
 
     public void buyButtonClick() {
         itemPage.buyButtonClick();
+        //Іноді не спливає вікно з вмістом кошику, додав перевірку
+        if (!shoppingCartWindowIsDisplayed())
+            clickShoppingCartButton();
     }
 
     public boolean shoppingCartWindowIsDisplayed() {
@@ -76,15 +55,11 @@ public class ShoppingCartSteps extends BaseSteps{
         itemPage.clickShoppingCartButton();
     }
 
-    public void openAppliancesCategory() {
-        homepage.clickAppliancesCategory();
-    }
-
     public void openWashingMachinesCategory() {
         categoryPage.openWashingMachinesCategory();
     }
 
-    public Item getItemWithDiscountSpecsAndAddToCart(Integer elementNumberInList) {
+    public Item getItemWithDiscountSpecsAndAddToCart(int elementNumberInList) {
         Item item = categoryPage.getItemSpecs(elementNumberInList,true);
         categoryPage.addElementToShoppingCart(item.getItemWebElement(), true);
         return item;
@@ -96,8 +71,8 @@ public class ShoppingCartSteps extends BaseSteps{
         return isDisplayed;
     }
 
-    public boolean shoppingCartIconIsUpdated(Item item) {
-        return categoryPage.shoppingCartIconIsUpdated(item);
+    public boolean isShoppingCartIconUpdated(Item item) {
+        return categoryPage.isShoppingCartIconUpdated(item);
 
     }
 
@@ -113,28 +88,26 @@ public class ShoppingCartSteps extends BaseSteps{
         categoryPage.clickShoppingCartHeaderIcon();
     }
 
-    public List<WebElement> getItemsListFromShoppingCartPage() {
-        return shoppingCartPage.getItemListFromShoppingCartPage();
-    }
-
-    public String getItemTitleFromShoppingCartPage(WebElement itemInShoppingCartPage) {
-        return itemInShoppingCartPage.findElement(By.xpath("//ul[@class='cart-list']/li//a[@class='cart-product__title']")).getText();
-    }
-
     public Float getShoppingCartTotal() {
         return getTotalPriceFromShoppingCartWindow();
     }
 
     public List<Item> getShoppingCartItems() {
         List<WebElement> elementsInShoppingCart = shoppingCartPage.getItemListFromShoppingCartPage();
-        return shoppingCartPage.getShoppingCartItems(elementsInShoppingCart);
+        String itemTitle;
+        Float itemPrice;
+        List<Item> itemsList = new ArrayList<>();
+        for (WebElement element : elementsInShoppingCart
+        ) {
+            itemTitle = element.findElement(By.xpath(".//a[@class='cart-product__title']")).getText();
+            itemPrice = shoppingCartPage.getItemPrice(element.findElement(By.xpath(".//p[contains(@class,'cart-product__price')]")));
+            itemsList.add(new Item(itemTitle, itemPrice, element));
+        }
+        return itemsList;
     }
 
-    public void shoppingCartClear() {
-        shoppingCartPage.deleteAllItemsInCart();
-    }
-
-    public void waitForShoppingCartPageLoad() {
-        shoppingCartPage.waitForShoppingCartPageLoad();
+    public void clearShoppingCart() {
+//        знайшов простіший метод очистки кошику
+        shoppingCartPage.clearCookies();
     }
 }

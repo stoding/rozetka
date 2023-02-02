@@ -7,13 +7,13 @@ import static org.assertj.core.api.Assertions.*;
 
 public class LoginFormTest extends BaseTest {
 
-    public static final String USER_LOGIN_VALID = "sting.mat@gmail.com";
-    public static final String USER_PASSWORD_VALID = "Qwert12345";
+    private static final String USER_LOGIN_VALID = "sting.mat@gmail.com";
+    private static final String USER_PASSWORD_VALID = "Qwert12345";
 
     @Test
     public void loginFormOpen() {
         LoginSteps loginSteps = new LoginSteps(driver);
-        assertThat(loginSteps.loginFormOpen()).isTrue();
+        assertThat(loginSteps.clickLoginAndVerifyFormOpened()).isTrue();
     }
 
     @DataProvider(name = "loginParams")
@@ -38,16 +38,15 @@ public class LoginFormTest extends BaseTest {
     @Test(dataProvider = "loginParams", dependsOnMethods = "loginFormOpen", priority = 1)
     public void loginValidationMessageCheck(String login, String expectedMessage) {
         LoginSteps loginSteps = new LoginSteps(driver);
-        loginSteps.loginFieldClean();
-        assertThat(loginSteps.loginFormLoginValidationMessage(login)).isEqualTo(expectedMessage);
+        assertThat(loginSteps.getLoginFormLoginValidationMessage(login)).isEqualTo(expectedMessage);
     }
 
     @Test(priority = 2)
     public void loginWithValidParameters() {
         LoginSteps loginSteps = new LoginSteps(driver);
         loginSteps.navigateToHomePage();
-        assertThat(loginSteps.loginFormOpen()).isTrue();
-        loginSteps.loginUser(USER_LOGIN_VALID, USER_PASSWORD_VALID);
+        assertThat(loginSteps.clickLoginAndVerifyFormOpened()).isTrue();
+        loginSteps.fillLoginForm(USER_LOGIN_VALID, USER_PASSWORD_VALID);
         try {
             assertThat(loginSteps.captchaIsDisplayed()).isTrue();
         } catch (AssertionError e) {
