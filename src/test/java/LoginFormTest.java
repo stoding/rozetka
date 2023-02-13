@@ -47,10 +47,7 @@ public class LoginFormTest extends BaseTest {
         loginSteps.navigateToHomePage();
         assertThat(loginSteps.clickLoginAndVerifyFormOpened()).isTrue();
         loginSteps.fillLoginForm(USER_LOGIN_VALID, USER_PASSWORD_VALID);
-        try {
-            assertThat(loginSteps.captchaIsDisplayed()).isTrue();
-        } catch (AssertionError e) {
-            assertThat(loginSteps.registeredUserMenuIsDisplayed()).withFailMessage("Captcha was not displayed, login unsuccessful").isTrue();
-        }
+        assertThat(loginSteps.isUserLoginSuccessful()).isTrue();
+
     }
 }

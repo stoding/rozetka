@@ -33,7 +33,7 @@ public class BaseSteps {
         return basePage.getPageURL();
     }
 
-    public void openCategory(String categoryLinkContains){
+    public void openCategory(String categoryLinkContains) {
         basePage.openCategory(categoryLinkContains);
     }
 }

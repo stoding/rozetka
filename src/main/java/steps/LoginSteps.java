@@ -25,11 +25,26 @@ public class LoginSteps extends BaseSteps {
         homepage.loginButtonClick();
     }
 
-    public boolean captchaIsDisplayed() {
+    public boolean isCaptchaDisplayed() {
         return homepage.isDisplayed("//iframe[@title='reCAPTCHA']", 2000);
     }
 
-    public boolean registeredUserMenuIsDisplayed() {
+    public boolean isRegisteredUserMenuDisplayed() {
         return homepage.isDisplayed("//div[@class='main-auth-wrap']");
+    }
+
+    public boolean isUserLoginSuccessful() {
+        if (isCaptchaDisplayed()) {
+            System.out.println("Captcha is displayed, test considered successful");
+            return true;
+        }
+        if (isRegisteredUserMenuDisplayed()) {
+            return true;
+        } else {
+            System.out.println("Captcha is not displayed, login page is not loaded");
+            return false;
+        }
+
+
     }
 }

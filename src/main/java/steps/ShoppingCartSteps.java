@@ -1,7 +1,6 @@
 package steps;
 
 import model.Item;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -9,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ShoppingCartSteps extends BaseSteps{
+public class ShoppingCartSteps extends BaseSteps {
     public ShoppingCartSteps(WebDriver driver) {
         super(driver);
     }
@@ -20,7 +19,7 @@ public class ShoppingCartSteps extends BaseSteps{
     }
 
     public Item getItemWithDiscountSpecsAndOpenPage(int elementNumberInList) {
-        Item item = categoryPage.getItemSpecs(elementNumberInList,true);
+        Item item = categoryPage.getItemSpecs(elementNumberInList, true);
         categoryPage.openElementPageWithDiscountedPrice(elementNumberInList);
         return item;
     }
@@ -37,7 +36,7 @@ public class ShoppingCartSteps extends BaseSteps{
     }
 
     public boolean shoppingCartWindowIsDisplayed() {
-        return categoryPage.isDisplayed("//div[@class='modal__holder modal__holder_show_animation modal__holder--large']") || categoryPage.isDisplayed("//h1[@class='cart-page__heading']");
+        return categoryPage.isShoppingCartWindowDisplayed();
     }
 
     public float getTotalPriceFromShoppingCartWindow() {
@@ -60,14 +59,15 @@ public class ShoppingCartSteps extends BaseSteps{
     }
 
     public Item getItemWithDiscountSpecsAndAddToCart(int elementNumberInList) {
-        Item item = categoryPage.getItemSpecs(elementNumberInList,true);
-        categoryPage.addElementToShoppingCart(item.getItemWebElement(), true);
+        Item item = categoryPage.getItemSpecs(elementNumberInList, true);
+        categoryPage.addElementToShoppingCart(item.getItemWebElement());
         return item;
     }
 
     public boolean itemAddedToShoppingCartMessageIsDisplayed() {
-        boolean isDisplayed = categoryPage.isDisplayed("//span[contains(text(),'Товар добавлен в корзину')]");
-        categoryPage.waitForMessageDisappear();
+        boolean isDisplayed = categoryPage.isItemAddedToCartMessageDisplayed();
+        if (isDisplayed)
+            categoryPage.waitForMessageDisappear(); //чекаємо на зникнення повідомлення про додавання в кошик
         return isDisplayed;
     }
 
@@ -76,12 +76,13 @@ public class ShoppingCartSteps extends BaseSteps{
 
     }
 
-    public Integer shoppingCartHeaderCounterIsUpdated() {
+    public Integer isShoppingCartHeaderCounterUpdated() {
         return categoryPage.shoppingCartHeaderCounter();
     }
 
     public void waitForItemsLoaded() {
-        categoryPage.waitForElementStaleness("//div[@class='goods-tile__price price--red ng-star-inserted']/../..");
+        categoryPage.waitForItemsLoaded();
+
     }
 
     public void clickShoppingCartHeaderIcon() {
@@ -93,14 +94,14 @@ public class ShoppingCartSteps extends BaseSteps{
     }
 
     public List<Item> getShoppingCartItems() {
-        List<WebElement> elementsInShoppingCart = shoppingCartPage.getItemListFromShoppingCartPage();
+        List<WebElement> elementsInShoppingCart = shoppingCartPage.getItemsWebelementListFromShoppingCartPage();
         String itemTitle;
         Float itemPrice;
         List<Item> itemsList = new ArrayList<>();
         for (WebElement element : elementsInShoppingCart
         ) {
-            itemTitle = element.findElement(By.xpath(".//a[@class='cart-product__title']")).getText();
-            itemPrice = shoppingCartPage.getItemPrice(element.findElement(By.xpath(".//p[contains(@class,'cart-product__price')]")));
+            itemTitle = shoppingCartPage.getItemTitle(element);
+            itemPrice = shoppingCartPage.getShoppingCartItemPrice(element);
             itemsList.add(new Item(itemTitle, itemPrice, element));
         }
         return itemsList;

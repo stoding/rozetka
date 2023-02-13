@@ -7,10 +7,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class BasePage {
-    private static final String XPATH_CATALOG_PAGE_H1 = "//h1[@class='catalog-heading ng-star-inserted']";
-    private static final String XPATH_PORTAL_H1 = "//h1[@class='portal__heading ng-star-inserted']";
-    private static final String XPATH_MAIN_PAGE_SIDE_MENU = "//a[@class='menu-categories__link']";
-    private static final String XPATH_HEADER_SEARCH_BUTTON = "//button[contains(@class,'search-form__submit')]";
+    private static final String CATALOG_PAGE_H1 = "//h1[@class='catalog-heading ng-star-inserted']";
+    private static final String PORTAL_H1 = "//h1[@class='portal__heading ng-star-inserted']";
+    private static final String MAIN_PAGE_SIDE_MENU = "//div[contains(@class,'menu-wrapper_state_static')]";
+    private static final String HEADER_SEARCH_BUTTON = "//button[contains(@class,'search-form__submit')]";
+    private static final String MAIN_PAGE_SIDE_MENU_CATEGORY_LINK = "//ul[contains(@class,'menu-categories_type_main')]//a[contains(@href,'%s')]";
     public WebDriver driver;
     public WebDriverWait wait;
 
@@ -29,8 +30,7 @@ public class BasePage {
             return driver.findElement(By.xpath(webElementXpath)).isDisplayed();
         } catch (NoSuchElementException e) {
             return false;
-        }
-        finally {
+        } finally {
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         }
     }
@@ -78,24 +78,27 @@ public class BasePage {
     }
 
     public void waitForCategoryPageLoaded() {
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath(XPATH_CATALOG_PAGE_H1))));
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath(CATALOG_PAGE_H1))));
     }
 
     public void waitForCategoryPortalPageLoaded() {
-        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath(XPATH_PORTAL_H1))));
+        wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath(PORTAL_H1))));
     }
 
     public void openHomePage() {
         driver.get(ROZETKA_HOMEPAGE_ADDRESS);
-        wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(XPATH_MAIN_PAGE_SIDE_MENU))));
+        wait.until(ExpectedConditions.elementToBeClickable(driver.findElement(By.xpath(MAIN_PAGE_SIDE_MENU))));
     }
+
     public void clickSearchButton() {
-        driver.findElement(By.xpath(XPATH_HEADER_SEARCH_BUTTON)).click();
+        driver.findElement(By.xpath(HEADER_SEARCH_BUTTON)).click();
     }
+
     public void openCategory(String categoryLinkContains) {
-        driver.findElement(By.xpath(String.format("//ul[contains(@class,'menu-categories_type_main')]//a[contains(@href,'%s')]",categoryLinkContains))).click();
+        driver.findElement(By.xpath(String.format(MAIN_PAGE_SIDE_MENU_CATEGORY_LINK, categoryLinkContains))).click();
         waitForCategoryPortalPageLoaded();
     }
+
     public void clearCookies() {
         driver.manage().deleteAllCookies();
     }

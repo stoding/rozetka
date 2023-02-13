@@ -9,34 +9,4 @@
             <class name = "SortingTest"/>
         </classes>
     </test>
-<!--    <test name="Login">-->
-
-<!--        <classes>-->
-<!--            <class name = "LoginFormTest"/>-->
-<!--        </classes>-->
-<!--    </test>-->
-<!--    <test name="itemSearch">-->
-
-<!--        <classes>-->
-<!--            <class name = "SearchFormTest"/>-->
-<!--        </classes>-->
-<!--    </test>-->
-<!--    <test name="itemComparison">-->
-
-<!--        <classes>-->
-<!--            <class name = "ComparisonTest"/>-->
-<!--        </classes>-->
-<!--    </test>-->
-<!--    <test name="shoppingCart">-->
-
-<!--        <classes>-->
-<!--            <class name = "ShoppingCartTest"/>-->
-<!--        </classes>-->
-<!--    </test>-->
-<!--    <test name="sorting">-->
-
-<!--        <classes>-->
-<!--            <class name = "SortingTest"/>-->
-<!--        </classes>-->
-<!--    </test>-->
 </suite>

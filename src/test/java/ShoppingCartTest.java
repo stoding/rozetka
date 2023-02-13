@@ -54,7 +54,7 @@ public class ShoppingCartTest extends BaseTest {
             itemsList.add(shoppingCartSteps.getItemWithDiscountSpecsAndAddToCart(i));
             assertThat(shoppingCartSteps.itemAddedToShoppingCartMessageIsDisplayed()).isTrue();
             assertThat(shoppingCartSteps.isShoppingCartIconUpdated(itemsList.get(i - 1))).isTrue();
-            assertThat(shoppingCartSteps.shoppingCartHeaderCounterIsUpdated()).isEqualTo(i);
+            assertThat(shoppingCartSteps.isShoppingCartHeaderCounterUpdated()).isEqualTo(i);
         }
         shoppingCartSteps.clickShoppingCartHeaderIcon();
         assertThat(shoppingCartSteps.shoppingCartWindowIsDisplayed()).isTrue();

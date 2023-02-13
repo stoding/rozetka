@@ -10,10 +10,13 @@ import java.util.List;
 
 public class Homepage extends BasePage {
 
-    private static final String LOGIN_FIELD_VALIDATION_MESSAGE_XPATH = "//input[@id='auth_email']/following-sibling::p";
-    private static final String LOGIN_WINDOW_XPATH = "//h3[contains(text(),'Вход')]";
-    private static final String LOGIN_ICON_XPATH = "//li[@class='header-actions__item header-actions__item--user']//button";
-    private static final String LOGIN_BUTTON_XPATH = "//button[contains(text(), 'Войти')]";
+    private static final String LOGIN_FIELD_VALIDATION_MESSAGE = "//input[@id='auth_email']/following-sibling::p";
+    private static final String LOGIN_WINDOW = "//h3[contains(text(),'Вход')]";
+    private static final String LOGIN_ICON = "//li[@class='header-actions__item header-actions__item--user']//button";
+    private static final String LOGIN_BUTTON = "//button[contains(text(), 'Войти')]";
+    private static final String SEARCH_FIELD = "//input[@name='search']";
+    private static final String SEARCH_SUGGESTION_LIST = "//ul[@class='search-suggest__group']//a";
+    private static final String LOGIN_FIELD = "//input[@id='auth_email']";
 
     public Homepage(WebDriver driver) {
         super(driver);
@@ -21,11 +24,12 @@ public class Homepage extends BasePage {
 
 
     public void loginIconClick() {
-        driver.findElement(By.xpath(LOGIN_ICON_XPATH)).click();
+        driver.findElement(By.xpath(LOGIN_ICON)).click();
 
     }
-    public boolean loginWindowIsDisplayed(){
-        return isDisplayed(LOGIN_WINDOW_XPATH, 2000);
+
+    public boolean loginWindowIsDisplayed() {
+        return isDisplayed(LOGIN_WINDOW, 2000);
     }
 
     public void inputLogin(String login) {
@@ -33,13 +37,13 @@ public class Homepage extends BasePage {
     }
 
     public String getValidationMessage() {
-        if (isDisplayed(LOGIN_FIELD_VALIDATION_MESSAGE_XPATH, 100)) {
-            return driver.findElement(By.xpath(LOGIN_FIELD_VALIDATION_MESSAGE_XPATH)).getText();
+        if (isDisplayed(LOGIN_FIELD_VALIDATION_MESSAGE, 100)) {
+            return driver.findElement(By.xpath(LOGIN_FIELD_VALIDATION_MESSAGE)).getText();
         } else return "";
     }
 
     public void searchFieldClear() {
-        fieldClear("//input[@name='search']");
+        fieldClear(SEARCH_FIELD);
     }
 
     public void inputPassword(String password) {
@@ -47,7 +51,7 @@ public class Homepage extends BasePage {
     }
 
     public void loginButtonClick() {
-        driver.findElement(By.xpath(LOGIN_BUTTON_XPATH)).click();
+        driver.findElement(By.xpath(LOGIN_BUTTON)).click();
     }
 
     public void enterSearchQuery(String input) {
@@ -55,10 +59,10 @@ public class Homepage extends BasePage {
     }
 
     public List<WebElement> getSearchSuggestionList() {
-        return driver.findElements(By.xpath("//ul[@class='search-suggest__group']//a"));
+        return driver.findElements(By.xpath(SEARCH_SUGGESTION_LIST));
     }
 
     public void loginFieldClear() {
-        fieldClear("//input[@id='auth_email']");
+        fieldClear(LOGIN_FIELD);
     }
 }

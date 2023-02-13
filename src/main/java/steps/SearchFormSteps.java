@@ -22,12 +22,12 @@ public class SearchFormSteps extends BaseSteps {
     }
 
     public boolean searchSuggestionListContainsString(List<WebElement> elementsList, String expectedString) {
+        boolean isExpectedStringContainActualString = false;
         for (WebElement element : elementsList
         ) {
-            if (element.getText().contains(expectedString))
-                return true;
+            isExpectedStringContainActualString = element.getText().contains(expectedString);
         }
-        return false;
+        return isExpectedStringContainActualString;
     }
 
     public List<SearchField> getSuggestedCategoryNameAndLink() {
@@ -44,11 +44,10 @@ public class SearchFormSteps extends BaseSteps {
     }
 
     public boolean isCategoryDisplayedCorrectly(List<SearchField> categoriesFromSuggestionList) {
-        for (SearchField parameter : categoriesFromSuggestionList)
-        {
+        for (SearchField parameter : categoriesFromSuggestionList) {
             navigateTo(parameter.getSuggestingCategoryLink());
             if (!parameter.getSuggestionCategoryName().equals(getCategoryPageBreadCrumbs()))
-            return false;
+                return false;
         }
         return true;
     }

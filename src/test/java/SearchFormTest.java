@@ -24,8 +24,9 @@ public class SearchFormTest extends BaseTest {
         SearchFormSteps searchFormSteps = new SearchFormSteps(driver);
         searchFormSteps.navigateToHomePage();
         searchFormSteps.enterSearchQuery(searchQuery);
-        assertThat(searchFormSteps.searchSuggestionListContainsString(searchFormSteps.getSuggestionList(),expectedStringDisplayed)).isTrue();
+        assertThat(searchFormSteps.searchSuggestionListContainsString(searchFormSteps.getSuggestionList(), expectedStringDisplayed)).isTrue();
     }
+
     @Test
     public void categoryPageNavigateFromSearchSuggestionList() {
         SearchFormSteps searchFormSteps = new SearchFormSteps(driver);

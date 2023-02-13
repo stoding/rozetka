@@ -12,10 +12,10 @@ public class SortingSteps extends BaseSteps {
     }
 
 
-
     public void openBlanketPage() {
         categoryPage.openBlanketPage();
     }
+
     public void openHomeTextilePage() {
         categoryPage.openHomeTextilePage();
     }

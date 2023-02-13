@@ -36,7 +36,6 @@ public class SortingTest extends BaseTest {
         //перевірка що першими у списку йдуть новинки
         assertThat(sortingSteps.isNewItemsDisplayedFirst()).isTrue();
         //перевірка що наступна сторінка після сторінки де не всі елементи є новинками, не містить товарів с тегов новинка
-    //    assertThat(sortingSteps.noNewItemsOnNextPages()).isTrue();
     }
 
 }
