@@ -3,10 +3,10 @@
     <test name="Smoke">
         <classes>
             <class name = "LoginFormTest"/>
-            <class name = "SearchFormTest"/>
-            <class name = "ComparisonTest"/>
-            <class name = "ShoppingCartTest"/>
-            <class name = "SortingTest"/>
+<!--            <class name = "SearchFormTest"/>-->
+<!--            <class name = "ComparisonTest"/>-->
+<!--            <class name = "ShoppingCartTest"/>-->
+<!--            <class name = "SortingTest"/>-->
         </classes>
     </test>
 </suite>

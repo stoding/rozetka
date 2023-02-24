@@ -1,3 +1,4 @@
+import com.google.inject.Inject;
 import model.Item;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -8,31 +9,38 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.codeborne.selenide.Selenide.open;
 import static org.assertj.core.api.Assertions.*;
 
 public class ShoppingCartTest extends BaseTest {
 
+    @Inject
+    ShoppingCartSteps shoppingCartSteps;
+
     @BeforeMethod
     public void goToHomePage() {
-        ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
-        shoppingCartSteps.navigateToHomePage();
+        open(ROZETKA_HOMEPAGE_URL);
     }
 
     @AfterMethod
     public void clearShoppingCart() {
-        ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
         shoppingCartSteps.clearShoppingCart();
     }
 
     @Test
     public void priceUpdateAfterAddingService() {
-        ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
         shoppingCartSteps.openCategory("telefony-tv-i-ehlektronika");
         assertThat(shoppingCartSteps.getPageURL()).contains("telefony-tv-i-ehlektronika");
         shoppingCartSteps.openIphoneCategory();
         assertThat(shoppingCartSteps.getPageURL()).contains("mobile-phones");
         Item itemFromCategoryPage = shoppingCartSteps.getItemWithDiscountSpecsAndOpenPage(1);
         assertThat(itemFromCategoryPage.getItemTitle()).isEqualTo(shoppingCartSteps.getItemTitleFromItemPage());
+        //В мене тут виникла проблема. Іноді якось криво завантажується сторінка і після кліку по кнопці покупки
+//        відкривається порожня корзина. Я намагався вирішити різними методами. Якщо просто обробляти подію закриваючи вікно то
+//        наступний клік по кнопці покупки знов відкриває порожнє вікно корзини. Дещо допоміг варіант
+//        перезавантаження поточної сторінки, але після цього став криво реагувати браузер на додавання послуги гарантії,
+//        а саме не додавалась гарантія у підсумкову суму, типу чекбокс клацає, але сторінка обновляється зі старою ціною
+//        дивно, якщо є думки - буду рад пораді як вирішити...
         shoppingCartSteps.buyButtonClick();
         assertThat(shoppingCartSteps.shoppingCartWindowIsDisplayed()).isTrue();
         assertThat(itemFromCategoryPage.getItemPrice()).isEqualTo(shoppingCartSteps.getTotalPriceFromShoppingCartWindow());
@@ -42,12 +50,11 @@ public class ShoppingCartTest extends BaseTest {
 
     @Test
     public void itemsWithDiscountAddToCart() {
-        ShoppingCartSteps shoppingCartSteps = new ShoppingCartSteps(driver);
         shoppingCartSteps.openCategory("bt.rozetka");
         assertThat(shoppingCartSteps.getPageURL()).contains("bt.rozetka.com.ua");
         shoppingCartSteps.openWashingMachinesCategory();
         assertThat(shoppingCartSteps.getPageURL()).contains("washing_machines");
-        shoppingCartSteps.waitForItemsLoaded();
+        //shoppingCartSteps.waitForItemsLoaded();
 
         List<Item> itemsList = new ArrayList<>();
         for (int i = 1; i < 3; i++) {

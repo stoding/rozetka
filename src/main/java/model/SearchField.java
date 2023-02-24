@@ -1,8 +1,8 @@
 package model;
 
 public class SearchField {
-    private String suggestionCategoryName;
-    private String suggestingCategoryLink;
+    private final String suggestionCategoryName;
+    private final String suggestingCategoryLink;
 
     public SearchField(String suggestionCategoryName, String suggestingCategoryLink) {
         this.suggestionCategoryName = suggestionCategoryName;

@@ -1,21 +1,30 @@
 package steps;
 
+import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
+import com.google.inject.Inject;
 import model.Item;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import pages.CategoryPage;
+import pages.ItemPage;
+import pages.ShoppingCartPage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class ShoppingCartSteps extends BaseSteps {
-    public ShoppingCartSteps(WebDriver driver) {
-        super(driver);
-    }
+
+    @Inject
+    private CategoryPage categoryPage;
+    @Inject
+    private ItemPage itemPage;
+    @Inject
+    private ShoppingCartPage shoppingCartPage;
+
 
     public void openIphoneCategory() {
         categoryPage.clickIphoneCategoryLink();
-        waitForItemsLoaded();
     }
 
     public Item getItemWithDiscountSpecsAndOpenPage(int elementNumberInList) {
@@ -30,13 +39,20 @@ public class ShoppingCartSteps extends BaseSteps {
 
     public void buyButtonClick() {
         itemPage.buyButtonClick();
-        //Іноді не спливає вікно з вмістом кошику, додав перевірку
-        if (!shoppingCartWindowIsDisplayed())
-            clickShoppingCartButton();
+        if (emptyShoppingCartWindowIsDisplayed()) {
+            String productCode = itemPage.getProductCode();
+
+            shoppingCartPage.closeShoppingCartWindow();
+            itemPage.buyButtonClick();
+        }
+            //clickShoppingCartButton();
     }
 
     public boolean shoppingCartWindowIsDisplayed() {
-        return categoryPage.isShoppingCartWindowDisplayed();
+        return shoppingCartPage.isShoppingCartWindowDisplayed();
+    }
+    public boolean emptyShoppingCartWindowIsDisplayed() {
+        return shoppingCartPage.isEmptyShoppingCartWindowDisplayed();
     }
 
     public float getTotalPriceFromShoppingCartWindow() {
@@ -46,7 +62,6 @@ public class ShoppingCartSteps extends BaseSteps {
     public Float getTwoYearWarrantyPriceAndAddService() {
         Float twoYearWarrantyPrice = itemPage.getTwoYearWarrantyPrice();
         itemPage.addTwoYearWarrantyRadioButtonClick();
-        itemPage.waitForPriceUpdate();
         return twoYearWarrantyPrice;
     }
 
@@ -76,13 +91,8 @@ public class ShoppingCartSteps extends BaseSteps {
 
     }
 
-    public Integer isShoppingCartHeaderCounterUpdated() {
+    public int isShoppingCartHeaderCounterUpdated() {
         return categoryPage.shoppingCartHeaderCounter();
-    }
-
-    public void waitForItemsLoaded() {
-        categoryPage.waitForItemsLoaded();
-
     }
 
     public void clickShoppingCartHeaderIcon() {
@@ -94,11 +104,11 @@ public class ShoppingCartSteps extends BaseSteps {
     }
 
     public List<Item> getShoppingCartItems() {
-        List<WebElement> elementsInShoppingCart = shoppingCartPage.getItemsWebelementListFromShoppingCartPage();
+        ElementsCollection elementsInShoppingCart = shoppingCartPage.getItemsWebelementListFromShoppingCartPage();
         String itemTitle;
         Float itemPrice;
         List<Item> itemsList = new ArrayList<>();
-        for (WebElement element : elementsInShoppingCart
+        for (SelenideElement element : elementsInShoppingCart
         ) {
             itemTitle = shoppingCartPage.getItemTitle(element);
             itemPrice = shoppingCartPage.getShoppingCartItemPrice(element);
@@ -108,7 +118,6 @@ public class ShoppingCartSteps extends BaseSteps {
     }
 
     public void clearShoppingCart() {
-//        знайшов простіший метод очистки кошику
         shoppingCartPage.clearCookies();
     }
 }

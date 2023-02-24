@@ -1,16 +1,16 @@
 package steps;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.SelenideElement;
+import com.google.inject.Inject;
+import pages.CategoryPage;
 
-import java.util.List;
+import static com.codeborne.selenide.Selectors.byXpath;
 
 public class SortingSteps extends BaseSteps {
-    public SortingSteps(WebDriver driver) {
-        super(driver);
-    }
 
+    @Inject
+    private CategoryPage categoryPage;
 
     public void openBlanketPage() {
         categoryPage.openBlanketPage();
@@ -20,25 +20,24 @@ public class SortingSteps extends BaseSteps {
         categoryPage.openHomeTextilePage();
     }
 
-    public void sortByPriceAscClick() {
+    public void sortByPriceAsc() {
         categoryPage.clickSortingByPriceAsc();
     }
 
     public boolean isSortedByPriceAscIsAppliedOnPage() {
         Float currentElementPrice;
         Float previousElementPrice = 0f;
-        List<WebElement> elementsListOnPage = categoryPage.getItemsListOnPage();
-        for (WebElement element : elementsListOnPage) {
-            currentElementPrice = categoryPage.getItemPrice(element.findElement(By.xpath(".//span[@class='goods-tile__price-value']")));
+        ElementsCollection elementsListOnPage = categoryPage.getItemsListOnPage();
+        for (SelenideElement element : elementsListOnPage) {
+            currentElementPrice = categoryPage.getItemPrice(element.find(byXpath(".//span[@class='goods-tile__price-value']")));
             if (currentElementPrice < previousElementPrice)
                 return false;
             previousElementPrice = currentElementPrice;
-
         }
         return true;
     }
 
-    public void openItemsListPageFromPagination(Integer numberOfPageInPagination) {
+    public void openItemsListPageFromPagination(int numberOfPageInPagination) {
         categoryPage.clickPageInPaginationList(numberOfPageInPagination);
     }
 
@@ -48,23 +47,21 @@ public class SortingSteps extends BaseSteps {
 
     public boolean isNewItemsDisplayedFirst() {
         int itemsListPage = 1;
-        // Шукаємо сторінку де не всі елементи є новинками
         while (true) {
             if (categoryPage.getItemsListOnPage().size() == categoryPage.getItemsNewArrivalsList().size()) {
                 itemsListPage++;
                 categoryPage.clickPageInPaginationList(itemsListPage);
             } else {
                 System.out.println("current page: " + itemsListPage); //для відладки тесту
-                break;
+                return isNewItemsDisplayedFirstOnCurrentPage(categoryPage.getItemsListOnPage());
             }
         }
-        return isNewItemsDisplayedFirstOnCurrentPage(categoryPage.getItemsListOnPage());
     }
 
-    private boolean isNewItemsDisplayedFirstOnCurrentPage(List<WebElement> itemsListOnPage) {
+    private boolean isNewItemsDisplayedFirstOnCurrentPage(ElementsCollection itemsListOnPage) {
         boolean itemWithoutNewTagPresent = false;
         int itemsQuantityWithNewArrivalsTag = categoryPage.getItemsNewArrivalsList().size();
-        int itemCounter = 0;
+        int itemsWithNoveltyTagCounter = 0;
         //Мабуть опишу тут логику: є List всіх товарів на сторінці, є кількість товарів з тегом "новинка"
         //Щоб не йти по всьому масиву елементів я додав лічильник - кількість товарів які ми вже зустріли з тегом "новинка"
         //Якщо нам не зустрівся елемент без тега "новинка" та лічильник нарахував ту ж саму кількість товарів, то повертаємо true
@@ -73,16 +70,15 @@ public class SortingSteps extends BaseSteps {
         //
         // UPD: Вже написав сценарій, але цей тепер тест падає))), ну з іншого боку теж добре.
         // На сторінці між елементами з новинками є елемент з тегом топ продаж
-        for (WebElement item : itemsListOnPage
+        for (SelenideElement item : itemsListOnPage
         ) {
-            //перевіряю через findelements щоб не падав тест з ексепшн коли елементу не буде
 
-            if (item.findElements(By.xpath(".//span[contains(@class,'promo-label_type_novelty')]")).size() != 0) {
-                itemCounter++;
-                if (itemCounter == itemsQuantityWithNewArrivalsTag)
+            if (item.find(byXpath(".//span[contains(@class,'promo-label_type_novelty')]")).isDisplayed()) {
+                itemsWithNoveltyTagCounter++;
+                if (itemsWithNoveltyTagCounter == itemsQuantityWithNewArrivalsTag)
                     return true;
                 if (itemWithoutNewTagPresent) {
-                    System.out.println("Defect in element number: " + itemCounter);
+                    System.out.println("Defect in element number: " + itemsWithNoveltyTagCounter + "\n" + itemsListOnPage.get(itemsWithNoveltyTagCounter-1).text());
                     return false;
                 }
             } else itemWithoutNewTagPresent = true;

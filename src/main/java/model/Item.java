@@ -1,15 +1,15 @@
 package model;
 
-import org.openqa.selenium.WebElement;
+import com.codeborne.selenide.SelenideElement;
 
 import java.util.Objects;
 
 public class Item {
-    private String itemTitle;
-    private Float itemPrice;
+    private final String itemTitle;
+    private final Float itemPrice;
     private String itemScreenResolution;
     private Integer numberOfSupportedSimCards;
-    private WebElement itemWebElement;
+    private SelenideElement itemWebElement;
 
     public Item(String itemTitle, Float itemPrice, String itemScreenResolution, Integer numberOfSupportedSimCards) {
         this.itemTitle = itemTitle;
@@ -18,18 +18,14 @@ public class Item {
         this.numberOfSupportedSimCards = numberOfSupportedSimCards;
     }
 
-    public Item(String itemTitle, Float itemPrice, WebElement element) {
+    public Item(String itemTitle, Float itemPrice, SelenideElement element) {
         this.itemTitle = itemTitle;
         this.itemPrice = itemPrice;
         this.itemWebElement = element;
     }
 
-    public WebElement getItemWebElement() {
+    public SelenideElement getItemWebElement() {
         return itemWebElement;
-    }
-
-    public void setItemWebElement(WebElement itemWebElement) {
-        this.itemWebElement = itemWebElement;
     }
 
     public String getItemTitle() {
@@ -38,14 +34,6 @@ public class Item {
 
     public Float getItemPrice() {
         return itemPrice;
-    }
-
-    public String getItemScreenResolution() {
-        return itemScreenResolution;
-    }
-
-    public Integer getNumberOfSupportedSimCards() {
-        return numberOfSupportedSimCards;
     }
 
     @Override

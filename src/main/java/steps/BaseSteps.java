@@ -1,32 +1,22 @@
 package steps;
 
-import org.openqa.selenium.WebDriver;
+import com.google.inject.Inject;
 import pages.*;
+import org.testng.annotations.Guice;
 
+@Guice
 public class BaseSteps {
-    public BasePage basePage;
-    public Homepage homepage;
-    public CategoryPage categoryPage;
-    public ComparisonPage comparisonPage;
-    public ItemPage itemPage;
-    public ShoppingCartPage shoppingCartPage;
-
-
-    public BaseSteps(WebDriver driver) {
-        this.homepage = new Homepage(driver);
-        this.categoryPage = new CategoryPage(driver);
-        this.comparisonPage = new ComparisonPage(driver);
-        this.itemPage = new ItemPage(driver);
-        this.shoppingCartPage = new ShoppingCartPage(driver);
-        this.basePage = new BasePage(driver);
-    }
+    @Inject
+    private BasePage basePage;
+    @Inject
+    private Homepage homepage;
 
     public void navigateTo(String link) {
         basePage.navigateTo(link);
     }
 
     public void navigateToHomePage() {
-        homepage.openHomePage();
+        basePage.openHomePage();
     }
 
     public String getPageURL() {

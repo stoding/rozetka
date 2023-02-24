@@ -1,38 +1,45 @@
 package steps;
 
+import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.SelenideElement;
+import com.google.inject.Inject;
 import model.SearchField;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import pages.CategoryPage;
+import pages.Homepage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchFormSteps extends BaseSteps {
-    public SearchFormSteps(WebDriver driver) {
-        super(driver);
-    }
+
+    @Inject
+    private Homepage homepage;
+    @Inject
+    private CategoryPage categoryPage;
 
     public void enterSearchQuery(String input) {
         homepage.searchFieldClear();
         homepage.enterSearchQuery(input);
+        homepage.waitForSearchSuggestionListAppear();
     }
 
-    public List<WebElement> getSuggestionList() {
+    public ElementsCollection getSuggestionList() {
         return homepage.getSearchSuggestionList();
     }
 
-    public boolean searchSuggestionListContainsString(List<WebElement> elementsList, String expectedString) {
-        boolean isExpectedStringContainActualString = false;
-        for (WebElement element : elementsList
+    public boolean searchSuggestionListContainsString(ElementsCollection elementsList, String expectedString) {
+
+        for (SelenideElement element : elementsList
         ) {
-            isExpectedStringContainActualString = element.getText().contains(expectedString);
+            if (!element.getText().toLowerCase().contains(expectedString.toLowerCase()))
+                return false;
         }
-        return isExpectedStringContainActualString;
+        return true;
     }
 
     public List<SearchField> getSuggestedCategoryNameAndLink() {
         List<SearchField> categoryParameters = new ArrayList<>();
-        for (WebElement element : homepage.getSearchSuggestionList()
+        for (SelenideElement element : homepage.getSearchSuggestionList()
         ) {
             categoryParameters.add(new SearchField(element.getText(), element.getAttribute("href")));
         }

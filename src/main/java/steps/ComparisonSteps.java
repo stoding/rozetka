@@ -1,20 +1,33 @@
 package steps;
 
+import com.google.inject.Inject;
 import model.Item;
-import org.openqa.selenium.WebDriver;
+import pages.CategoryPage;
+import pages.ComparisonPage;
+import pages.Homepage;
+import pages.ItemPage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ComparisonSteps extends BaseSteps {
-    public ComparisonSteps(WebDriver driver) {
-        super(driver);
-    }
+
+    private static final String ITEM_PRICE_ON_COMPARISON_PAGE = "(//div[contains(@class,'product__price' ) and contains(@class,'ng-star-inserted')]/span)[%s]";
+
+    @Inject
+    private Homepage homepage;
+    @Inject
+    private ItemPage itemPage;
+    @Inject
+    private CategoryPage categoryPage;
+    @Inject
+    private ComparisonPage comparisonPage;
 
     public void searchForItem(String queryString) {
         homepage.enterSearchQuery(queryString);
         homepage.clickSearchButton();
-        itemPage.waitForItemPageLoad(queryString);
+        itemPage.waitForItemPageLoad();
     }
 
     public String getItemTitleFromCategoryPage(int elementNumberInCategoryList) {
@@ -42,7 +55,7 @@ public class ComparisonSteps extends BaseSteps {
     }
 
     public boolean openComparisonWindow() {
-        categoryPage.comparisonIconClick();
+        categoryPage.comparisonHeaderButtonClick();
         return categoryPage.isComparisonWindowDisplayed();
     }
 
@@ -88,16 +101,15 @@ public class ComparisonSteps extends BaseSteps {
         comparisonPage.openAllItemSpecsOnComparisonPage();
     }
 
-    public List<Item> getItemSpecsFromComparisonPage() {
+    public List<Item> getItemsListFromComparisonPage() {
         List<Item> comparedItems = new ArrayList<>();
-        Integer getItemsQuantityOnPage = comparisonPage.getComparedItemsQuantity();
+        int getItemsQuantityOnPage = comparisonPage.getComparedItemsQuantity();
         for (int i = 1; i < getItemsQuantityOnPage + 1; i++) {
-            comparedItems.add(new Item(comparisonPage.getItemTitle(i),
-                    comparisonPage.getItemPrice(String.format("(//div[contains(@class,'product__price')]/span)[%s]", i)),
+            comparedItems.add(new Item(
+                    comparisonPage.getItemTitle(i),
+                    comparisonPage.getItemPrice(String.format(ITEM_PRICE_ON_COMPARISON_PAGE, i)),
                     comparisonPage.getItemScreenResolution(i),
                     comparisonPage.getItemNumberOfSupportedSimCards(i)));
-
-
         }
         return comparedItems;
     }
@@ -109,16 +121,12 @@ public class ComparisonSteps extends BaseSteps {
         categoryPage.waitForCategoryPageLoad();
     }
 
-    public void clearComparisonList() {
-        // Знайшов простіший спосіб видаляти зміст списку порівняння, та в іншому тесті зі змістом кошику покупця
-        comparisonPage.clearCookies();
-    }
-
     public boolean isComparedListsEqual(List<Item> itemList, List<Item> itemListOnComparisonPage) {
         int itemsListSize = itemList.size();
+        Collections.reverse(itemListOnComparisonPage);
         if (itemList.size() == itemListOnComparisonPage.size()) {
             for (int i = 0; i < itemsListSize; i++) {
-                if (!itemList.get(i).equals(itemListOnComparisonPage.get(itemsListSize - 1 - i)))
+                if (!itemList.get(i).equals(itemListOnComparisonPage.get(i)))
                     return false;
             }
             return true;

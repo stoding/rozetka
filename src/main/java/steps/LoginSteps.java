@@ -1,12 +1,12 @@
 package steps;
 
-import org.openqa.selenium.WebDriver;
+import com.google.inject.Inject;
+import pages.Homepage;
 
 public class LoginSteps extends BaseSteps {
 
-    public LoginSteps(WebDriver driver) {
-        super(driver);
-    }
+    @Inject
+    private Homepage homepage;
 
     public boolean clickLoginAndVerifyFormOpened() {
         homepage.loginIconClick();
@@ -26,11 +26,11 @@ public class LoginSteps extends BaseSteps {
     }
 
     public boolean isCaptchaDisplayed() {
-        return homepage.isDisplayed("//iframe[@title='reCAPTCHA']", 2000);
+        return homepage.isCaptchaDisplayed();
     }
 
     public boolean isRegisteredUserMenuDisplayed() {
-        return homepage.isDisplayed("//div[@class='main-auth-wrap']");
+        return homepage.isRegisteredUserMenuDisplayed();
     }
 
     public boolean isUserLoginSuccessful() {

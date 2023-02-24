@@ -3,13 +3,19 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import steps.ComparisonSteps;
+import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codeborne.selenide.Selenide.clearBrowserCookies;
+import static com.codeborne.selenide.Selenide.open;
 import static org.assertj.core.api.Assertions.*;
 
 public class ComparisonTest extends BaseTest {
+
+    @Inject
+    private ComparisonSteps comparisonSteps;
 
     private static final int ITEM_NUMBER_IN_CATEGORY_LIST = 1;
     private static final String SEARCH_QUERY_CATEGORY = "iPhone";
@@ -19,19 +25,16 @@ public class ComparisonTest extends BaseTest {
 
     @BeforeMethod
     public void goToHomePage() {
-        ComparisonSteps comparisonSteps = new ComparisonSteps(driver);
-        comparisonSteps.navigateToHomePage();
+        open(ROZETKA_HOMEPAGE_URL);
     }
 
     @AfterMethod
     public void clearComparisonList() {
-        ComparisonSteps comparisonSteps = new ComparisonSteps(driver);
-        comparisonSteps.clearComparisonList();
+        clearBrowserCookies();
     }
 
     @Test
     public void addOneItemToComparisonList() {
-        ComparisonSteps comparisonSteps = new ComparisonSteps(driver);
         comparisonSteps.searchForCategory(SEARCH_QUERY_CATEGORY);
         String comparedItemTitle = comparisonSteps.getItemTitleFromCategoryPage(ITEM_NUMBER_IN_CATEGORY_LIST);
         comparisonSteps.addElementToComparisonList(ITEM_NUMBER_IN_CATEGORY_LIST);
@@ -49,7 +52,6 @@ public class ComparisonTest extends BaseTest {
 
     @Test
     public void comparedItemsParametersCheck() {
-        ComparisonSteps comparisonSteps = new ComparisonSteps(driver);
         comparisonSteps.searchForItem(SEARCH_QUERY_FIRST_ITEM[0]);
         assertThat(comparisonSteps.getItemPageTitle()).contains(SEARCH_QUERY_FIRST_ITEM[1]);
         List<Item> itemList = new ArrayList<>();
@@ -68,7 +70,7 @@ public class ComparisonTest extends BaseTest {
         assertThat(comparisonSteps.openComparisonWindow()).isTrue();
         comparisonSteps.navigateToComparisonPage();
         comparisonSteps.openAllItemSpecsOnComparisonPage();
-        List<Item> itemListOnComparisonPage = comparisonSteps.getItemSpecsFromComparisonPage();
+        List<Item> itemListOnComparisonPage = comparisonSteps.getItemsListFromComparisonPage();
         assertThat(comparisonSteps.isComparedListsEqual(itemList, itemListOnComparisonPage)).isTrue();
 
     }
